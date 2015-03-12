@@ -1,0 +1,69 @@
+##################################################
+#                CREATED BY ANSIBLE              #
+##################################################
+
+{% if port == 443 %}
+<VirtualHost *:80>
+    ServerName http://{{ server_name }}
+    Redirect / https://{{ server_name }}
+</VirtualHost >
+{% endif %}
+
+<VirtualHost *:{{ port }}>
+
+    ServerName {{ server_name }}
+    {% if server_alias %}
+    ServerAlias {{ server_alias }}
+    {% endif %}
+
+    {% if RAILS_APP %}
+    # Setting the environment for the rails app
+    RailsEnv {{ rails_environment }}
+
+    PassengerMaxPoolSize 20
+    PassengerMinInstances 18
+    PassengerPoolIdleTime 10
+    PassengerMaxRequests 120
+    PassengerMaxRequestQueueSize 200
+        {% if port == 80 %}
+    PassengerPreStart http://{{ server_name }}
+        {% elif port == 443 %}
+    PassengerPreStart https://{{ server_name }}
+        {% endif %}
+    {% endif %}
+
+    {% if SSL %}
+    # Setting SSL settings
+    SSLEngine on
+    # TODO: Should look into SSLv3
+    SSLProtocol all -SSLv2
+    SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+    # jinja2 templating variables to set names of SSL files
+    SSLCertificateFile /etc/ssl/certs/{{ ssl_crt }}
+    SSLCertificateKeyFile /etc/ssl/private/{{ ssl_key }}
+    SSLCertificateChainFile /etc/ssl/certs/{{ ssl_ca_chain }}
+    {% endif %}
+
+    DocumentRoot {{ document_root }}
+
+    <Directory {{ document_root }}>
+        Require all granted
+        {% if SSL %}
+        SSLRequireSSL
+        SSLOptions +StdEnvVars
+        {% endif %}
+        # This relaxes Apache security settings.
+        AllowOverride all
+        # MultiViews must be turned off.
+        Options -MultiViews
+    </Directory>
+
+    <LocationMatch "^/assets/.*$">
+       FileETag None
+    </LocationMatch>
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ server_name }}.error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ server_name }}.access.log forwarded
+
+</VirtualHost>
+

@@ -1,0 +1,23 @@
+---
+
+port: 80
+# Domain name
+server_name: example.com
+
+# Leave blank to skip aliases
+server_alias: www.example.com
+
+# Where you files are stored
+document_root: /var/www
+
+# SSL certificate information
+ssl_crt: 2015.example.com.crt
+ssl_key: 2015.example.com.key
+ssl_ca_chain: 2015.example.com.ca.crt
+
+# Rails environment
+rails_environment: development
+
+# Global 
+SSL: false
+RAILS_APP: false
