@@ -17,11 +17,6 @@
     - { src: app.conf.j2, dest: "sites-available/000.{{ server_name }}.conf" }
 
 
-- name: deactivate default domain
-  raw: a2dissite {{ item }}
-  with_items:
-    - 000-default.conf
-
 - name: activate domain
   raw: a2ensite {{ item }}
   with_items:
