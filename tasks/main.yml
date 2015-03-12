@@ -14,7 +14,7 @@
             dest=/etc/apache2/{{ item.dest }}
   with_items:
     - { src: apache2.conf.j2, dest: apache2.conf }
-    - { src: app.conf.j2, dest: sites-available/000.{{ server_name }}.conf }
+    - { src: app.conf.j2, dest: "sites-available/000.{{ server_name }}.conf" }
 
 
 - name: deactivate default domain
@@ -25,5 +25,5 @@
 - name: activate domain
   raw: a2ensite {{ item }}
   with_items:
-    - 000-{{ server_name }}.conf
+    - "000-{{ server_name }}.conf"
   notify: start apache2
