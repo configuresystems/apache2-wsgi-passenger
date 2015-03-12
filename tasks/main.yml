@@ -24,5 +24,5 @@
 - name: activate domain
   raw: a2ensite {{ item }}
   with_items:
-    - "000-{{ server_name }}"
+    - "000-{{ server_name }}.conf"
   notify: start apache2
