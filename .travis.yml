@@ -24,8 +24,6 @@ script:
   # Run the role/playbook with ansible-playbook.
   - ansible-playbook -i tests/inventory/test tests/$SITE --connection=local --sudo
 
-  - ls -al /etc/apache2/sites-available
-
   # Run the role/playbook again, checking to make sure it's idempotent.
   - >
     ansible-playbook -i tests/inventory/test tests/$SITE --connection=local --sudo
